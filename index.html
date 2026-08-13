@@ -29,15 +29,31 @@ label{display:block;font-size:12px;color:var(--dim);margin:14px 0 6px;font-weigh
 .app{max-width:560px;margin:0 auto;min-height:100vh;padding-bottom:calc(84px + var(--safe-b))}
 .hidden{display:none!important}
 
-/* ---- lock screen ---- */
-.lock{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
-.lock-box{width:100%;max-width:400px;text-align:center}
-.lock-mark{font-family:'Space Grotesk';font-size:15px;letter-spacing:.14em;color:var(--dim);margin-bottom:10px}
-.lock-title{font-size:30px;font-weight:700;margin-bottom:6px}
+/* ---- lock / landing ---- */
+.lock{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.45;pointer-events:none}
+.orb1{width:340px;height:340px;background:#7C5CFF;top:-90px;left:-110px;animation:drift1 14s ease-in-out infinite alternate}
+.orb2{width:300px;height:300px;background:#38E5FF;bottom:-80px;right:-100px;animation:drift2 17s ease-in-out infinite alternate}
+.orb3{width:200px;height:200px;background:#FF5CA8;top:45%;right:-70px;opacity:.3;animation:drift1 20s ease-in-out infinite alternate-reverse}
+@keyframes drift1{from{transform:translate(0,0) scale(1)}to{transform:translate(50px,40px) scale(1.15)}}
+@keyframes drift2{from{transform:translate(0,0) scale(1)}to{transform:translate(-45px,-35px) scale(1.1)}}
+.lock-box{width:100%;max-width:400px;text-align:center;position:relative;z-index:2}
+.lock-mark{font-family:'Space Grotesk';font-size:13px;letter-spacing:.18em;color:var(--dim);margin-bottom:14px;animation:rise .7s ease both}
+.growline{width:min(78vw,300px);height:90px;margin:0 auto 10px;display:block}
+.growline path{stroke-dasharray:520;stroke-dashoffset:520;animation:draw 2.2s .3s cubic-bezier(.4,0,.2,1) forwards}
+.growline .spark{opacity:0;animation:pop .5s 2.3s ease both}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+.lock-title{font-size:31px;font-weight:700;margin-bottom:8px;animation:rise .7s .15s ease both}
 .lock-title em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.lock-sub{color:var(--dim);font-size:13.5px;margin-bottom:26px}
-.lock input{text-align:center;font-size:17px;letter-spacing:.1em;margin-bottom:12px}
+.tagline{height:22px;color:var(--dim);font-size:13.5px;margin-bottom:26px;animation:rise .7s .3s ease both}
+.tagline span{display:inline-block;animation:tagfade 4s ease infinite}
+@keyframes tagfade{0%,12%{opacity:0;transform:translateY(6px)}20%,80%{opacity:1;transform:none}92%,100%{opacity:0;transform:translateY(-6px)}}
+.lock input{text-align:center;font-size:17px;letter-spacing:.1em;margin-bottom:12px;animation:rise .7s .4s ease both}
 .lock-err{color:var(--red);font-size:13px;min-height:20px;margin-bottom:8px}
+.lock .btn{animation:rise .7s .5s ease both}
+.lock-foot{animation:rise .7s .65s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--grad);color:#0B0E1A;font-weight:600;font-size:15px;border-radius:12px;padding:13px 22px;width:100%;transition:transform .15s}
 .btn:active{transform:scale(.98)}
 .btn.ghost{background:var(--card2);color:var(--text);border:1px solid var(--line)}
@@ -135,6 +151,40 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .fade{animation:fade .35s ease both}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---- add wizard / onboarding ---- */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 14px;text-align:left;position:relative;overflow:hidden}
+.tile::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--tc,#7C5CFF)}
+.tile b{display:block;font-size:14.5px;font-family:'Space Grotesk'}
+.tile span{font-size:11.5px;color:var(--dim)}
+.tile:active{border-color:var(--tc)}
+.pick-list{margin-top:12px}
+.pick{display:flex;justify-content:space-between;align-items:center;padding:14px 4px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.pick b{font-size:14.5px;font-weight:500}
+.pick span{font-size:12px;color:var(--dim)}
+.pick:active b{color:var(--cyan)}
+.bigbtns{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.bigbtn{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;text-align:left}
+.bigbtn .ic{flex:0 0 42px;height:42px;border-radius:13px;background:linear-gradient(135deg,rgba(124,92,255,.25),rgba(56,229,255,.15));display:flex;align-items:center;justify-content:center;font-size:20px}
+.bigbtn b{display:block;font-size:15px;font-family:'Space Grotesk'}
+.bigbtn span{font-size:12.5px;color:var(--dim)}
+.bigbtn:active{border-color:var(--violet)}
+.steps{display:flex;gap:6px;margin:2px 0 14px}
+.steps i{flex:1;height:3px;border-radius:2px;background:var(--line)}
+.steps i.on{background:var(--grad)}
+.back{color:var(--dim);font-size:13px;font-weight:500;margin-bottom:6px;display:inline-block}
+.scan-row{display:flex;gap:10px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line)}
+.scan-row:last-child{border-bottom:none}
+.scan-row input[type=checkbox]{width:20px;height:20px;margin-top:3px;accent-color:#7C5CFF;flex:0 0 20px}
+.scan-body{flex:1}
+.scan-body input{margin-top:6px;padding:8px 10px;font-size:13.5px}
+.scan-hint{font-size:12px;color:var(--faint);margin-top:4px}
+.spin{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--violet);border-radius:50%;animation:sp 1s linear infinite;margin:20px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{padding:34px 22px;text-align:center}
+.empty .big{font-family:'Space Grotesk';font-size:24px;font-weight:700;margin:8px 0 6px}
+.empty p{color:var(--dim);font-size:13.5px}
 .updated{font-size:11px;color:var(--faint);padding:2px 18px 10px}
 </style>
 </head>
@@ -143,15 +193,22 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 
 <!-- LOCK -->
 <div class="lock" id="lock">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
   <div class="lock-box">
-    <div class="lock-mark">RETIRE / PERSONAL</div>
-    <h1 class="lock-title" id="lockTitle">Welcome back, <em>Vignesh</em></h1>
-    <p class="lock-sub" id="lockSub">Enter your passphrase to decrypt your data. It never leaves this browser.</p>
+    <div class="lock-mark">RETIRE / YOUR FUTURE FUND</div>
+    <svg class="growline" viewBox="0 0 300 90" fill="none" aria-hidden="true">
+      <path d="M6 78 C 60 76, 90 66, 130 54 S 210 30, 254 14" stroke="url(#lg)" stroke-width="3.5" stroke-linecap="round"/>
+      <circle class="spark" cx="254" cy="14" r="5.5" fill="#3DDC97"/>
+      <circle class="spark" cx="254" cy="14" r="10" fill="none" stroke="#3DDC97" stroke-width="1.5" opacity=".4"/>
+      <defs><linearGradient id="lg" x1="0" y1="90" x2="300" y2="0"><stop offset="0" stop-color="#7C5CFF"/><stop offset=".6" stop-color="#38E5FF"/><stop offset="1" stop-color="#3DDC97"/></linearGradient></defs>
+    </svg>
+    <h1 class="lock-title" id="lockTitle">Welcome back<em>.</em></h1>
+    <p class="tagline" id="lockSub"><span id="tagText">Every rupee you park today shows up with friends at 60.</span></p>
     <input type="password" id="passInput" placeholder="Passphrase" autocomplete="current-password">
     <input type="password" id="passInput2" class="hidden" placeholder="Repeat passphrase" autocomplete="new-password">
     <div class="lock-err" id="lockErr"></div>
     <button class="btn" id="unlockBtn">Unlock</button>
-    <p class="lock-sub" style="margin-top:18px;font-size:12px">Forgot it? There is no reset — restore from an exported backup file instead.<br><button id="importAtLock" style="color:var(--cyan);font-weight:600;margin-top:6px">Import backup file</button></p>
+    <p class="lock-foot" style="margin-top:18px;font-size:12px;color:var(--dim)">Forgot it? There is no reset — restore from an exported backup file instead.<br><button id="importAtLock" style="color:var(--cyan);font-weight:600;margin-top:6px">Import backup file</button></p>
   </div>
 </div>
 
@@ -269,18 +326,9 @@ const nowYM=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth
 function seedState(){
   return {
     v:1, createdAt:Date.now(), lastExport:null,
-    settings:{inflation:6, postRetireReturn:7, lifeExpectancy:85},
-    profiles:[
-      {id:'p1',name:'Vignesh',age:29,retireAge:60},
-      {id:'p2',name:'Wife',age:28,retireAge:60}
-    ],
-    investments:[
-      {id:uid(),pid:'p1',k:'epf',name:'EPF \u2013 Orion',corpus:690000,asOf:nowYM(),rate:8.25,hist:[{from:'2024-01',amt:12000}],stepUp:0,notes:''},
-      {id:uid(),pid:'p1',k:'ppf',name:'PPF',corpus:54000,asOf:nowYM(),rate:7.1,hist:[{from:'2025-01',amt:5000}],stepUp:0,start:'2025-01',notes:'Extend in 5-yr blocks after year 15'},
-      {id:uid(),pid:'p1',k:'mfidx',name:'UTI Nifty 50 Index (Coin)',corpus:10000,asOf:nowYM(),rate:12,hist:[{from:'2026-08',amt:5000}],stepUp:0,notes:'Manual SIP on the 1st \u2014 phone reminder',mfCode:null},
-      {id:uid(),pid:'p1',k:'fd',name:'FD \u2013 won\u2019t break',corpus:200000,asOf:nowYM(),rate:7,hist:[],stepUp:0,notes:'Untouchable, auto-renew'},
-      {id:uid(),pid:'p1',k:'term',name:'ICICI Term Plan',corpus:0,asOf:nowYM(),rate:0,hist:[{from:'2026-08',amt:308}],stepUp:0,notes:'\u20b93,700/yr \u00b7 cover till 60 \u00b7 nominee: wife'}
-    ]
+    settings:{inflation:6, postRetireReturn:7, lifeExpectancy:85, ai:{provider:'gemini',key:''}},
+    profiles:[{id:'p1',name:'You',age:30,retireAge:60}],
+    investments:[]
   };
 }
 async function save(){ localStorage.setItem(STORE_KEY, await encryptState(PASS,S)); }
@@ -505,6 +553,19 @@ function renderNudge(){
 }
 
 function renderDash(){
+  if(!S.investments.length){
+    view.innerHTML=`<div class="empty fade">
+      <div style="font-size:40px">\ud83c\udf31</div>
+      <div class="big">Start with what you already have</div>
+      <p>Add one thing \u2014 an FD, a SIP, your PF \u2014 and the retirement picture starts building itself.</p>
+      <div class="bigbtns" style="text-align:left">
+        <button class="bigbtn" id="emptyScan"><span class="ic">\ud83d\udcf7</span><div><b>Scan a screenshot or statement</b><span>PF passbook, Coin holdings, bank statement \u2014 it reads and adds them</span></div></button>
+        <button class="bigbtn" id="emptyAdd"><span class="ic">\u270f\ufe0f</span><div><b>Add one manually</b><span>3 quick steps \u2014 pick, name, numbers</span></div></button>
+      </div></div>`;
+    document.getElementById('emptyScan').onclick=openScan;
+    document.getElementById('emptyAdd').onclick=()=>openAddWizard();
+    return;
+  }
   const p=currentProfile();
   const retireAge = whatif.retireAge ?? (p?p.retireAge:60);
   const yrs = p ? retireAge-p.age : Math.max(...S.profiles.map(x=>retireAge-x.age));
@@ -589,7 +650,7 @@ function renderInvest(){
         ${inv.stepUp?`<span class="tag">step-up ${inv.stepUp}%/yr</span>`:''}${inv.hist&&inv.hist.length>1?`<span class="tag">${inv.hist.length} contribution changes</span>`:''}</div>
         <div class="inv-nums"><div class="inv-corpus">${cat.prot?fmtINR(amt*12)+'/yr':fmtINR(inv.corpus||0)}</div>
         <div class="inv-mo">${cat.prot?'premium':(amt?fmtINR(amt)+'/mo':'no monthly')}</div></div>
-      </div>`;}).join('')}`).join('')||'<p class="sub" style="color:var(--dim)">Nothing yet \u2014 tap + to add your first source.</p>'}
+      </div>`;}).join('')}`).join('')||'<p class="sub" style="color:var(--dim)">Nothing yet \u2014 tap + below to scan a screenshot or add manually.</p>'}
   </div>`;
   view.querySelectorAll('.inv').forEach(el=>el.onclick=()=>openInvSheet(el.dataset.id));
 }
@@ -623,6 +684,12 @@ function renderSettings(){
     </div>`).join('')}
     <button class="addline" id="addProfile">+ Add family member</button>
   </div>
+  <div class="card"><h3 style="font-size:14px;font-weight:600">Scanning (AI key)</h3>
+    <p style="font-size:13px;color:var(--dim);margin:8px 0 4px">Powers the screenshot/statement reader. Stored encrypted here; files go browser \u2192 provider directly.</p>
+    <label>Provider</label>
+    <select id="sAiProv"><option value="gemini" ${(S.settings.ai&&S.settings.ai.provider)==='gemini'?'selected':''}>Google Gemini (free tier)</option><option value="anthropic" ${(S.settings.ai&&S.settings.ai.provider)==='anthropic'?'selected':''}>Anthropic Claude</option></select>
+    <label>API key</label><input id="sAiKey" placeholder="${S.settings.ai&&S.settings.ai.key?'\u2022\u2022\u2022\u2022 saved \u2014 paste to replace':'Paste key'}" autocomplete="off">
+  </div>
   <div class="card"><h3 style="font-size:14px;font-weight:600">Backup</h3>
     <p style="font-size:13px;color:var(--dim);margin:8px 0 14px">One encrypted file restores everything on any phone or laptop \u2014 WhatsApp it to yourself, park it in Drive, doesn\u2019t matter. Useless without your passphrase.</p>
     <div class="row2"><button class="btn ghost" id="btnExport">Export backup</button><button class="btn ghost" id="btnImport">Import backup</button></div>
@@ -638,6 +705,9 @@ function renderSettings(){
     S.settings.inflation=+document.getElementById('sInfl').value||6;
     S.settings.postRetireReturn=+document.getElementById('sPost').value||7;
     S.settings.lifeExpectancy=+document.getElementById('sLife').value||85;
+    S.settings.ai=S.settings.ai||{provider:'gemini',key:''};
+    S.settings.ai.provider=document.getElementById('sAiProv').value;
+    const nk=document.getElementById('sAiKey').value.trim(); if(nk)S.settings.ai.key=nk;
     view.querySelectorAll('[data-pid]').forEach(row=>{
       const p=S.profiles.find(x=>x.id===row.dataset.pid);
       p.name=row.querySelector('.pName').value||p.name;
@@ -752,6 +822,242 @@ function openInvSheet(id){
 function histRow(h){return `<div class="hist-row"><input type="month" class="hFrom" value="${h.from}"><input type="number" class="hAmt" value="${h.amt}" placeholder="\u20b9/month"><button class="x">\u00d7</button></div>`;}
 function bindHistX(){document.querySelectorAll('#histRows .x').forEach(b=>b.onclick=()=>b.parentElement.remove());}
 
+
+/* ================= ONBOARDING ================= */
+function openOnboarding(){
+  openSheet(`
+  <h2>Two questions, then you\u2019re in</h2>
+  <p class="sub">Everything else can wait \u2014 this sets your runway.</p>
+  <label>Your name</label><input id="obName" placeholder="Name" autocomplete="off">
+  <div class="row2">
+    <div><label>Age now</label><input id="obAge" type="number" inputmode="numeric" placeholder="29"></div>
+    <div><label>Retire at</label><input id="obRet" type="number" inputmode="numeric" value="60"></div>
+  </div>
+  <label>Gemini API key <span style="color:var(--faint)">(optional \u2014 powers the screenshot scanner)</span></label>
+  <input id="obKey" placeholder="Paste key, or skip \u2014 asked again when you first scan" autocomplete="off">
+  <p class="sub" style="margin-top:6px">Stored encrypted on this device only \u2014 never in GitHub, never in the code. Enter once; it stays until you wipe or change it.</p>
+  <div style="height:14px"></div>
+  <button class="btn" id="obGo">Let\u2019s go</button>
+  <p class="sub" style="margin-top:12px">You can add family members later in Settings.</p>`);
+  document.getElementById('obGo').onclick=async()=>{
+    const p=S.profiles[0];
+    p.name=document.getElementById('obName').value.trim()||'You';
+    p.age=+document.getElementById('obAge').value||30;
+    p.retireAge=+document.getElementById('obRet').value||60;
+    const k=document.getElementById('obKey').value.trim();
+    if(k)S.settings.ai={provider:'gemini',key:k};
+    await save(); closeSheet(); render();
+  };
+}
+
+/* ================= ADD WIZARD (3 steps) ================= */
+let wiz={};
+function openAddWizard(){
+  wiz={step:1,cat:null,k:null};
+  drawWizard();
+}
+function drawWizard(){
+  if(wiz.step===1){
+    openSheet(`
+    <div class="steps"><i class="on"></i><i></i><i></i></div>
+    <h2>What kind of thing is it?</h2>
+    <p class="sub">Tap a bucket \u2014 don\u2019t overthink, you can change it later.</p>
+    <div class="tiles">${Object.keys(CATS).map(c=>`<button class="tile" style="--tc:${CATS[c].color}" data-c="${c}"><b>${CATS[c].name}</b><span>${CATALOG.filter(i=>i.c===c).slice(0,3).map(i=>i.n).join(' \u00b7 ')}\u2026</span></button>`).join('')}</div>
+    <div style="height:10px"></div>`);
+    sheet.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{wiz.cat=t.dataset.c;wiz.step=2;drawWizard();});
+  }
+  else if(wiz.step===2){
+    openSheet(`
+    <div class="steps"><i class="on"></i><i class="on"></i><i></i></div>
+    <button class="back" id="wBack">\u2190 back</button>
+    <h2>${CATS[wiz.cat].name} \u2014 which one?</h2>
+    <div class="pick-list">${CATALOG.filter(i=>i.c===wiz.cat).map(i=>`<button class="pick" data-k="${i.k}"><b>${i.n}</b><span>${i.prot?'protection':i.r+'%'} \u00b7 ${i.lock||'\u2014'}</span></button>`).join('')}</div>`);
+    document.getElementById('wBack').onclick=()=>{wiz.step=1;drawWizard();};
+    sheet.querySelectorAll('.pick').forEach(p=>p.onclick=()=>{wiz.k=p.dataset.k;wiz.step=3;drawWizard();});
+  }
+  else{
+    const cat=BYK[wiz.k];
+    openSheet(`
+    <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+    <button class="back" id="wBack">\u2190 back</button>
+    <h2>${cat.n}</h2>
+    <p class="sub">${cat.prot?'Premium goes out \u2014 shown honestly as cost, not corpus.':'Just three numbers. The rate is pre-filled ('+cat.r+'%) \u2014 leave it unless you know better.'}</p>
+    ${cat.mf?`<label>Link live fund (optional \u2014 pulls NAV & real returns)</label><input id="wMf" placeholder="Search e.g. UTI Nifty 50"><div id="wMfRes"></div>`:''}
+    <label>Name it (optional)</label><input id="wName" placeholder="${cat.n}">
+    <div class="row2">
+      <div><label>${cat.prot?'Yearly premium \u20b9':'Value today \u20b9'}</label><input id="wVal" type="number" inputmode="numeric" placeholder="0"></div>
+      <div><label>${cat.prot?'Cover till (year)':'Monthly \u20b9 (0 if none)'}</label><input id="wMo" type="number" inputmode="numeric" placeholder="0"></div>
+    </div>
+    <label>Whose?</label>
+    <select id="wPid">${S.profiles.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select>
+    <div style="height:16px"></div>
+    <button class="btn" id="wSave">Add it</button>
+    <p class="sub" style="margin-top:10px;text-align:center">Step-up, history, maturity \u2014 tap the card afterwards for the full editor.</p>`);
+    document.getElementById('wBack').onclick=()=>{wiz.step=2;drawWizard();};
+    let mfPick=null;
+    const mfIn=document.getElementById('wMf');
+    if(mfIn){let t;mfIn.oninput=e=>{clearTimeout(t);const q=e.target.value.trim();if(q.length<3)return;
+      t=setTimeout(async()=>{const box=document.getElementById('wMfRes');box.innerHTML='<p class="sub">Searching\u2026</p>';
+        try{const res=await mfSearch(q);
+          box.innerHTML=res.slice(0,5).map(r=>`<div class="mf-result" data-code="${r.schemeCode}" data-name="${r.schemeName.replace(/"/g,'')}">${r.schemeName}</div>`).join('')||'<p class="sub">No match.</p>';
+          box.querySelectorAll('.mf-result').forEach(el=>el.onclick=async()=>{
+            mfPick={code:el.dataset.code,name:el.dataset.name};
+            box.innerHTML='<p class="sub">Linked \u2014 pulling NAV\u2026</p>';
+            try{const data=await mfLatest(mfPick.code);mfPick.nav=+data[0].nav;mfPick.navDate=data[0].date;
+              mfPick.cagr={y1:navCAGR(data,1),y3:navCAGR(data,3),y5:navCAGR(data,5)};
+              box.innerHTML=`<p class="sub">\u2713 ${mfPick.name.slice(0,50)} \u00b7 NAV ${mfPick.nav}${mfPick.cagr.y5?' \u00b7 5y '+mfPick.cagr.y5.toFixed(1)+'%':''}</p>`;
+              if(!document.getElementById('wName').value)document.getElementById('wName').value=mfPick.name.split('-')[0].trim();
+            }catch(e){box.innerHTML='<p class="sub">Linked \u00b7 NAV fetch failed (offline?) \u2014 will retry on open.</p>';}
+          });
+        }catch(e){box.innerHTML='<p class="sub">Search needs network \u2014 add manually, link later.</p>';}
+      },450);};}
+    document.getElementById('wSave').onclick=async()=>{
+      const val=+document.getElementById('wVal').value||0;
+      const mo=+document.getElementById('wMo').value||0;
+      const obj={id:uid(),pid:document.getElementById('wPid').value,k:wiz.k,
+        name:document.getElementById('wName').value.trim()||cat.n,
+        corpus:cat.prot?0:val,asOf:nowYM(),
+        rate:mfPick&&mfPick.cagr&&mfPick.cagr.y5?+mfPick.cagr.y5.toFixed(1):cat.r,
+        hist:cat.prot?(val?[{from:nowYM(),amt:Math.round(val/12)}]:[]):(mo?[{from:nowYM(),amt:mo}]:[]),
+        stepUp:0,notes:cat.prot&&mo?('Cover till '+mo):''};
+      if(mfPick){obj.mfCode=mfPick.code;obj.mfName=mfPick.name;obj.nav=mfPick.nav;obj.navDate=mfPick.navDate;obj.cagr=mfPick.cagr;
+        if(obj.nav&&obj.corpus)obj.units=obj.corpus/obj.nav;}
+      S.investments.push(obj); await save(); closeSheet(); tab='invest';
+      document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab==='invest'));
+      render();
+    };
+  }
+}
+
+/* ================= SCAN: statement / screenshot upload ================= */
+function guessKey(t){
+  t=(t||'').toLowerCase();
+  const map=[[/(^|\W)epf|provident fund|\bpf\b/,'epf'],[/vpf/,'vpf'],[/ppf|public provident/,'ppf'],[/nps.*(tier ?2|t2)/,'nps2'],[/nps|pension system/,'nps1'],
+   [/sukanya/,'ssy'],[/nsc/,'nsc'],[/kvp|kisan vikas/,'kvp'],[/senior citizen/,'scss'],[/recurring|(^|\W)rd(\W|$)/,'rd'],
+   [/fixed deposit|(^|\W)fd(\W|$)|term deposit/,'fd'],[/sweep/,'sweep'],[/savings/,'sav'],
+   [/elss|tax saver/,'elss'],[/index fund|nifty|sensex/,'mfidx'],[/debt fund|liquid fund|gilt/,'mfdebt'],[/hybrid|balanced/,'mfhy'],[/mutual fund|growth|sip/,'mfeq'],
+   [/etf/,'etf'],[/reit/,'reit'],[/invit/,'invit'],[/stock|equity share|demat/,'stocks'],
+   [/sovereign gold|sgb/,'sgb'],[/gold etf/,'gldetf'],[/digital gold/,'dgold'],[/gold/,'pgold'],
+   [/rbi.*bond|floating rate/,'rbifrb'],[/ncd|corporate/,'corpfd'],[/t-?bill/,'tbill'],[/g-?sec|government securit/,'gsec'],
+   [/term insurance|term plan/,'term'],[/health insurance|mediclaim/,'health'],[/ulip/,'ulip'],[/endowment|lic|jeevan/,'endow'],
+   [/rent|property|real estate|flat|plot/,'restate'],[/esop|rsu/,'esop'],[/crypto|bitcoin|btc|eth/,'crypto'],[/chit/,'chit'],[/p2p/,'p2p']];
+  for(const[re,k]of map)if(re.test(t))return k;
+  return 'custom';
+}
+function fileToB64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});}
+const EXTRACT_PROMPT='You are reading a personal finance document or screenshot (bank statement, PF passbook, mutual fund holdings, FD receipt, insurance policy, broker app screenshot). Extract every distinct investment, deposit, holding or recurring contribution you can see. For bank statements, infer SIPs/RDs/EMIs from repeating monthly debits. Respond with ONLY a JSON array, no markdown, no prose: [{"name":"","type":"one of: EPF PPF NPS FD RD savings mutual fund index fund ELSS stocks ETF gold SGB bond term insurance health insurance ULIP other","current_value_inr":0,"monthly_contribution_inr":0,"note":""}] . Use 0 when a number is not visible. Never invent values not present in the document.';
+
+async function aiExtract(file){
+  const ai=S.settings.ai||{};
+  if(!ai.key)throw{noKey:true};
+  const b64=await fileToB64(file);
+  const isPdf=file.type==='application/pdf';
+  if(ai.provider==='anthropic'){
+    const content=[isPdf?{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}}:{type:'image',source:{type:'base64',media_type:file.type||'image/png',data:b64}},{type:'text',text:EXTRACT_PROMPT}];
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'content-type':'application/json','x-api-key':ai.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2000,messages:[{role:'user',content}]})});
+    const j=await r.json();
+    if(j.error)throw new Error(j.error.message||'API error');
+    return parseExtract((j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('\n'));
+  }else{
+    const part=isPdf?{inline_data:{mime_type:'application/pdf',data:b64}}:{inline_data:{mime_type:file.type||'image/png',data:b64}};
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+encodeURIComponent(ai.key),{
+      method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[part,{text:EXTRACT_PROMPT}]}]})});
+    const j=await r.json();
+    if(j.error)throw new Error(j.error.message||'API error');
+    const txt=(((j.candidates||[])[0]||{}).content||{}).parts?.map(p=>p.text).join('\n')||'';
+    return parseExtract(txt);
+  }
+}
+function parseExtract(txt){
+  const m=txt.match(/\[[\s\S]*\]/);
+  if(!m)throw new Error('Could not read that \u2014 try a clearer screenshot.');
+  const arr=JSON.parse(m[0]);
+  return arr.map(x=>({name:x.name||'Unknown',k:guessKey((x.type||'')+' '+(x.name||'')),
+    corpus:+x.current_value_inr||0,monthly:+x.monthly_contribution_inr||0,note:x.note||''}));
+}
+function openScan(){
+  const ai=S.settings.ai||{};
+  if(!ai.key){
+    openSheet(`
+    <h2>One-time setup for scanning</h2>
+    <p class="sub">Reading screenshots needs an AI eye. Paste your own key \u2014 it\u2019s stored encrypted on this device with everything else, and files go straight from your browser to the provider, nowhere else.</p>
+    <label>Provider</label>
+    <select id="aiProv"><option value="gemini">Google Gemini \u2014 free tier, easiest (aistudio.google.com \u2192 Get API key)</option><option value="anthropic">Anthropic Claude (console.anthropic.com)</option></select>
+    <label>API key</label><input id="aiKey" placeholder="Paste key" autocomplete="off">
+    <div style="height:16px"></div>
+    <button class="btn" id="aiSave">Save & continue</button>
+    <div style="height:8px"></div>
+    <p class="sub">Don\u2019t want this? <button id="aiSkip" style="color:var(--cyan);font-weight:600">Add manually instead</button></p>`);
+    document.getElementById('aiSave').onclick=async()=>{
+      const k=document.getElementById('aiKey').value.trim();
+      if(!k)return;
+      S.settings.ai={provider:document.getElementById('aiProv').value,key:k};
+      await save(); openScan();
+    };
+    document.getElementById('aiSkip').onclick=()=>openAddWizard();
+    return;
+  }
+  openSheet(`
+  <h2>Scan & add</h2>
+  <p class="sub">PF passbook, Coin holdings, FD receipt, bank statement \u2014 photo, screenshot or PDF. It reads, you confirm, nothing is added silently.</p>
+  <div class="bigbtns">
+    <button class="bigbtn" id="scanPick"><span class="ic">\ud83d\udcc4</span><div><b>Choose file / take photo</b><span>JPG, PNG or PDF</span></div></button>
+  </div>
+  <div id="scanOut"></div>
+  <input type="file" id="scanFile" accept="image/*,application/pdf" class="hidden">`);
+  const fileIn=document.getElementById('scanFile');
+  document.getElementById('scanPick').onclick=()=>fileIn.click();
+  fileIn.onchange=async()=>{
+    const f=fileIn.files[0]; if(!f)return;
+    const out=document.getElementById('scanOut');
+    out.innerHTML='<div class="spin"></div><p class="sub" style="text-align:center">Reading '+f.name+'\u2026</p>';
+    try{
+      const rows=await aiExtract(f);
+      if(!rows.length){out.innerHTML='<p class="sub" style="margin-top:14px">Nothing recognisable found \u2014 try a clearer shot or add manually.</p>';return;}
+      out.innerHTML=`<p class="sub" style="margin-top:14px">Found ${rows.length} \u2014 untick anything wrong, edit numbers, then add:</p>
+      <div id="scanRows">${rows.map((r,i)=>`
+        <div class="scan-row" data-i="${i}">
+          <input type="checkbox" checked>
+          <div class="scan-body">
+            <input class="sName" value="${r.name.replace(/"/g,'')}">
+            <div class="row2" style="margin-top:6px">
+              <div><input class="sVal" type="number" value="${r.corpus}" placeholder="value \u20b9"></div>
+              <div><input class="sMo" type="number" value="${r.monthly}" placeholder="\u20b9/month"></div>
+            </div>
+            <div class="scan-hint">${BYK[r.k].n} \u00b7 ${BYK[r.k].prot?'protection':(BYK[r.k].r+'%')}${r.note?' \u00b7 '+r.note.slice(0,60):''}</div>
+          </div>
+        </div>`).join('')}</div>
+      <label>Whose?</label><select id="sPid">${S.profiles.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select>
+      <div style="height:14px"></div>
+      <button class="btn" id="scanAdd">Add selected</button><div style="height:6px"></div>`;
+      document.getElementById('scanAdd').onclick=async()=>{
+        const pid=document.getElementById('sPid').value;
+        let added=0;
+        document.querySelectorAll('#scanRows .scan-row').forEach(row=>{
+          if(!row.querySelector('input[type=checkbox]').checked)return;
+          const i=+row.dataset.i, base=rows[i];
+          const cat=BYK[base.k];
+          const mo=+row.querySelector('.sMo').value||0;
+          S.investments.push({id:uid(),pid,k:base.k,
+            name:row.querySelector('.sName').value||cat.n,
+            corpus:cat.prot?0:(+row.querySelector('.sVal').value||0),asOf:nowYM(),
+            rate:cat.r,hist:mo?[{from:nowYM(),amt:mo}]:[],stepUp:0,notes:base.note||''});
+          added++;
+        });
+        await save(); closeSheet();
+        tab='invest';
+        document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab==='invest'));
+        render();
+      };
+    }catch(e){
+      out.innerHTML='<p class="sub" style="margin-top:14px;color:var(--red)">'+(e.noKey?'No API key set.':(e.message||'Reading failed'))+'</p><p class="sub">Check the key in Settings, or add manually.</p>';
+    }
+  };
+}
+
 /* ================= BACKUP ================= */
 async function exportBackup(){
   S.lastExport=Date.now(); await save();
@@ -790,9 +1096,13 @@ function importBackup(atLock){
 /* ================= BOOT / LOCK FLOW ================= */
 const lockEl=document.getElementById('lock'),passIn=document.getElementById('passInput'),passIn2=document.getElementById('passInput2');
 const isFirst=!localStorage.getItem(STORE_KEY);
+const TAGS_GATE=!!localStorage.getItem(STORE_KEY);
+const TAGS=['Every rupee you park today shows up with friends at 60.','Compounding does the heavy lifting \u2014 you just keep showing up.','Future-you is watching. Make them smile.','31 years of runway is a superpower. Use it.','The best SIP date was yesterday. The second best is the 1st.'];
+let tagI=0;
+if(TAGS_GATE)setInterval(()=>{const t=document.getElementById('tagText');if(!t||lockEl.classList.contains('hidden'))return;tagI=(tagI+1)%TAGS.length;t.textContent=TAGS[tagI];t.style.animation='none';void t.offsetWidth;t.style.animation='';},4000);
 if(isFirst){
-  document.getElementById('lockTitle').innerHTML='Set your <em>passphrase</em>';
-  document.getElementById('lockSub').textContent='This encrypts everything on this device. There is no reset \u2014 pick one you\u2019ll never forget.';
+  document.getElementById('lockTitle').innerHTML='Your future fund<br>starts <em>today</em>';
+  document.getElementById('tagText').textContent='Set a passphrase \u2014 it encrypts everything, and there is no reset.';
   passIn2.classList.remove('hidden');
   document.getElementById('unlockBtn').textContent='Create & start';
 }
@@ -808,6 +1118,10 @@ async function doUnlock(){
     if(p.length<6){err.textContent='At least 6 characters, yaar.';return;}
     if(p!==passIn2.value){err.textContent='Passphrases don\u2019t match.';return;}
     PASS=p; S=seedState(); await save();
+    lockEl.classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('tabbar').classList.remove('hidden');
+    openOnboarding(); render(); return;
   }else{
     try{ S=await decryptState(p,localStorage.getItem(STORE_KEY)); PASS=p; }
     catch(e){ err.textContent='Wrong passphrase \u2014 nothing renders without it.'; return; }
@@ -819,7 +1133,15 @@ async function doUnlock(){
   refreshNAVs(); // silent, cached fallback
 }
 document.getElementById('lockNow').onclick=()=>location.reload();
-document.getElementById('fab').onclick=()=>openInvSheet(null);
+document.getElementById('fab').onclick=()=>{
+  openSheet(`<h2>Add investment</h2>
+  <div class="bigbtns">
+    <button class="bigbtn" id="chScan"><span class="ic">\ud83d\udcf7</span><div><b>Scan a screenshot or statement</b><span>Upload \u2192 it reads \u2192 you confirm</span></div></button>
+    <button class="bigbtn" id="chManual"><span class="ic">\u270f\ufe0f</span><div><b>Add manually</b><span>3 quick steps</span></div></button>
+  </div><div style="height:8px"></div>`);
+  document.getElementById('chScan').onclick=openScan;
+  document.getElementById('chManual').onclick=()=>openAddWizard();
+};
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   b.classList.add('active'); tab=b.dataset.tab; render();
