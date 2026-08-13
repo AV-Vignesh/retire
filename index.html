@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0B0E1A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Retire · Vignesh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0E1A; --bg2:#10142400; --card:#141A2E; --card2:#1A2140; --line:#232B4A;
+  --text:#E8ECF8; --dim:#8B94B8; --faint:#5A6285;
+  --violet:#7C5CFF; --cyan:#38E5FF; --pink:#FF5CA8; --green:#3DDC97; --amber:#FFB547; --red:#FF6B6B;
+  --grad:linear-gradient(100deg,#7C5CFF 0%,#38E5FF 60%,#3DDC97 100%);
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5;overscroll-behavior:none}
+h1,h2,h3,.disp{font-family:'Space Grotesk',system-ui,sans-serif}
+.num{font-variant-numeric:tabular-nums;font-family:'Space Grotesk',monospace}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:15px;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--violet)}
+label{display:block;font-size:12px;color:var(--dim);margin:14px 0 6px;font-weight:500}
+::placeholder{color:var(--faint)}
+.app{max-width:560px;margin:0 auto;min-height:100vh;padding-bottom:calc(84px + var(--safe-b))}
+.hidden{display:none!important}
+
+/* ---- lock screen ---- */
+.lock{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+.lock-box{width:100%;max-width:400px;text-align:center}
+.lock-mark{font-family:'Space Grotesk';font-size:15px;letter-spacing:.14em;color:var(--dim);margin-bottom:10px}
+.lock-title{font-size:30px;font-weight:700;margin-bottom:6px}
+.lock-title em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lock-sub{color:var(--dim);font-size:13.5px;margin-bottom:26px}
+.lock input{text-align:center;font-size:17px;letter-spacing:.1em;margin-bottom:12px}
+.lock-err{color:var(--red);font-size:13px;min-height:20px;margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--grad);color:#0B0E1A;font-weight:600;font-size:15px;border-radius:12px;padding:13px 22px;width:100%;transition:transform .15s}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:var(--card2);color:var(--text);border:1px solid var(--line)}
+.btn.small{width:auto;padding:9px 16px;font-size:13.5px;border-radius:10px}
+.btn.danger{background:none;border:1px solid var(--red);color:var(--red)}
+
+/* ---- header / profiles ---- */
+.top{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 6px}
+.brand{font-family:'Space Grotesk';font-weight:700;font-size:17px}
+.brand span{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.profiles{display:flex;gap:8px;overflow-x:auto;padding:8px 18px 4px;scrollbar-width:none}
+.profiles::-webkit-scrollbar{display:none}
+.pchip{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--dim);font-size:13px;font-weight:500;white-space:nowrap}
+.pchip.active{border-color:var(--violet);color:var(--text);background:linear-gradient(135deg,rgba(124,92,255,.18),rgba(56,229,255,.10))}
+.pavatar{width:20px;height:20px;border-radius:50%;background:var(--grad);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0B0E1A}
+
+/* ---- hero ---- */
+.hero{padding:20px 18px 8px}
+.hero-label{font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.hero-num{font-family:'Space Grotesk';font-weight:700;font-size:clamp(44px,13vw,62px);line-height:1.05;margin:4px 0 2px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums}
+.hero-sub{color:var(--dim);font-size:13.5px}
+.hero-sub b{color:var(--text);font-weight:600}
+.money-toggle{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;margin-top:14px}
+.money-toggle button{padding:7px 14px;border-radius:8px;font-size:12.5px;color:var(--dim);font-weight:500}
+.money-toggle button.on{background:var(--card2);color:var(--text)}
+
+/* ---- cards ---- */
+.section{padding:16px 18px 4px}
+.section h2{font-size:16px;font-weight:600;margin-bottom:10px}
+.section h2 small{color:var(--dim);font-weight:400;font-size:12.5px;margin-left:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.stat-row{display:flex;gap:10px}
+.stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px}
+.stat .k{font-size:11.5px;color:var(--dim);margin-bottom:3px}
+.stat .v{font-family:'Space Grotesk';font-weight:600;font-size:19px;font-variant-numeric:tabular-nums}
+.inv{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden}
+.inv::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cat,#7C5CFF)}
+.inv-body{flex:1;min-width:0}
+.inv-name{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inv-meta{font-size:12px;color:var(--dim);margin-top:2px}
+.inv-nums{text-align:right}
+.inv-corpus{font-family:'Space Grotesk';font-weight:600;font-size:15.5px;font-variant-numeric:tabular-nums}
+.inv-mo{font-size:11.5px;color:var(--dim)}
+.tag{display:inline-block;font-size:10.5px;padding:2px 8px;border-radius:8px;background:var(--card2);color:var(--dim);margin-top:4px}
+.chart-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.chart-wrap h3{font-size:13.5px;font-weight:600;margin-bottom:2px}
+.chart-wrap .sub{font-size:12px;color:var(--dim);margin-bottom:10px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px}
+.legend span{font-size:11.5px;color:var(--dim);display:inline-flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:3px;display:inline-block}
+
+/* ---- sliders / what-if ---- */
+.whatif label{margin-top:16px;display:flex;justify-content:space-between;color:var(--dim);font-size:12.5px}
+.whatif label b{color:var(--text);font-variant-numeric:tabular-nums;font-family:'Space Grotesk'}
+input[type=range]{-webkit-appearance:none;appearance:none;background:var(--line);height:5px;border-radius:3px;padding:0;border:none;margin-top:10px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--grad);border:3px solid var(--bg);box-shadow:0 0 0 1px var(--violet)}
+
+/* ---- insights ---- */
+.insight{display:flex;gap:11px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--dim)}
+.insight:last-child{border-bottom:none}
+.insight b{color:var(--text)}
+.dot{flex:0 0 8px;width:8px;height:8px;border-radius:50%;margin-top:6px}
+
+/* ---- playbook ---- */
+.play{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.play h3{font-size:14.5px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.play h3 .when{font-size:11.5px;color:var(--amber);font-weight:500}
+.play p{font-size:13px;color:var(--dim);margin-top:7px}
+
+/* ---- forms / sheet ---- */
+.sheet-veil{position:fixed;inset:0;background:rgba(4,6,14,.72);z-index:60;opacity:0;pointer-events:none;transition:opacity .22s}
+.sheet-veil.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;background:var(--bg);border:1px solid var(--line);border-bottom:none;border-radius:22px 22px 0 0;z-index:61;max-height:88vh;overflow-y:auto;padding:10px 18px calc(24px + var(--safe-b));transform:translateY(102%);transition:transform .26s cubic-bezier(.3,.9,.3,1)}
+.sheet.open{transform:translateY(0)}
+.sheet-grip{width:38px;height:4px;border-radius:3px;background:var(--line);margin:6px auto 14px}
+.sheet h2{font-size:19px;font-weight:700;margin-bottom:4px}
+.sheet .sub{color:var(--dim);font-size:13px;margin-bottom:6px}
+.row2{display:flex;gap:10px}.row2>div{flex:1}
+.hist-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.hist-row input{flex:1}
+.hist-row .x{flex:0 0 34px;height:34px;border-radius:9px;background:var(--card2);border:1px solid var(--line);color:var(--dim);font-size:16px}
+.addline{color:var(--cyan);font-size:13px;font-weight:500;margin-top:10px;display:inline-block}
+.mf-result{padding:11px 12px;border:1px solid var(--line);border-radius:10px;margin-top:8px;font-size:13.5px;cursor:pointer;background:var(--card)}
+.mf-result:active{border-color:var(--violet)}
+.notice{background:linear-gradient(135deg,rgba(255,181,71,.12),rgba(255,92,168,.08));border:1px solid rgba(255,181,71,.35);border-radius:14px;padding:13px 15px;margin:0 18px 12px;font-size:13px;color:var(--text);display:flex;gap:10px;align-items:flex-start}
+.notice button{margin-left:auto;color:var(--amber);font-weight:600;font-size:13px;flex:0 0 auto}
+
+/* ---- tabbar ---- */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(11,14,26,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;max-width:560px;margin:0 auto;padding-bottom:var(--safe-b)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 0 9px;color:var(--faint);font-size:10.5px;font-weight:500}
+.tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab.active{color:var(--text)}
+.tab.active svg{stroke:url(#tabgrad)}
+.fab{position:fixed;right:max(18px,calc(50% - 262px));bottom:calc(96px + var(--safe-b));width:54px;height:54px;border-radius:18px;background:var(--grad);color:#0B0E1A;font-size:26px;font-weight:600;z-index:49;box-shadow:0 8px 24px rgba(124,92,255,.4);display:flex;align-items:center;justify-content:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.fade{animation:fade .35s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.updated{font-size:11px;color:var(--faint);padding:2px 18px 10px}
+</style>
+</head>
+<body>
+<svg width="0" height="0"><defs><linearGradient id="tabgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#38E5FF"/></linearGradient></defs></svg>
+
+<!-- LOCK -->
+<div class="lock" id="lock">
+  <div class="lock-box">
+    <div class="lock-mark">RETIRE / PERSONAL</div>
+    <h1 class="lock-title" id="lockTitle">Welcome back, <em>Vignesh</em></h1>
+    <p class="lock-sub" id="lockSub">Enter your passphrase to decrypt your data. It never leaves this browser.</p>
+    <input type="password" id="passInput" placeholder="Passphrase" autocomplete="current-password">
+    <input type="password" id="passInput2" class="hidden" placeholder="Repeat passphrase" autocomplete="new-password">
+    <div class="lock-err" id="lockErr"></div>
+    <button class="btn" id="unlockBtn">Unlock</button>
+    <p class="lock-sub" style="margin-top:18px;font-size:12px">Forgot it? There is no reset — restore from an exported backup file instead.<br><button id="importAtLock" style="color:var(--cyan);font-weight:600;margin-top:6px">Import backup file</button></p>
+  </div>
+</div>
+
+<div class="app hidden" id="app">
+  <div class="top">
+    <div class="brand">Retire<span>.</span></div>
+    <button id="lockNow" style="color:var(--dim);font-size:12.5px;font-weight:500">Lock</button>
+  </div>
+  <div class="profiles" id="profileChips"></div>
+  <div id="backupNudge"></div>
+  <main id="view"></main>
+</div>
+
+<button class="fab hidden" id="fab">+</button>
+
+<div class="sheet-veil" id="veil"></div>
+<div class="sheet" id="sheet"></div>
+
+<nav class="tabbar hidden" id="tabbar">
+  <button class="tab active" data-tab="dash"><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>Dashboard</button>
+  <button class="tab" data-tab="invest"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg>Investments</button>
+  <button class="tab" data-tab="play"><svg viewBox="0 0 24 24"><path d="M4 5h13a3 3 0 013 3v11H7a3 3 0 01-3-3V5z"/><path d="M4 5a3 3 0 013 3v11"/><path d="M11 9h5M11 13h5"/></svg>Playbook</button>
+  <button class="tab" data-tab="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.5-2-3.5-2.4 1a7 7 0 00-2-1.2L14 3h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.4-1a7 7 0 002 1.2L10 21h4l.5-2.6a7 7 0 002-1.2l2.4 1 2-3.5-2-1.5c.06-.4.1-.8.1-1.2z"/></svg>Settings</button>
+</nav>
+<script>
+/* ================= INSTRUMENT CATALOG ================= */
+const CATS = {
+  retire:{name:'Retirement & Govt',color:'#7C5CFF'},
+  small:{name:'Small Savings',color:'#38E5FF'},
+  bank:{name:'Bank',color:'#3DDC97'},
+  market:{name:'Market',color:'#FF5CA8'},
+  gold:{name:'Gold',color:'#FFB547'},
+  debt:{name:'Debt',color:'#8FA3FF'},
+  insure:{name:'Insurance',color:'#FF6B6B'},
+  other:{name:'Others',color:'#B8C0E0'}
+};
+const CATALOG = [
+ {k:'epf',n:'EPF',c:'retire',r:8.25,lock:'Till retirement / job exit',play:'Withdraw via Form 19 (corpus) + 10C (pension) on the UAN portal after leaving service. Fully tax-free after 5 continuous years. Don\u2019t withdraw on job switches \u2014 transfer instead.'},
+ {k:'vpf',n:'VPF',c:'retire',r:8.25,lock:'Same as EPF',play:'Rides on the EPF account; same UAN withdrawal process and tax treatment.'},
+ {k:'ppf',n:'PPF',c:'retire',r:7.1,lock:'15 yrs, extend in 5-yr blocks',play:'Form C at bank/post office after year 15. Fully tax-free. Partial withdrawal allowed from year 7. To reach 60, extend in 5-year blocks (with contribution) \u2014 one form each time.'},
+ {k:'nps1',n:'NPS Tier 1',c:'retire',r:10,lock:'Locked till 60',play:'At 60: max 60% as tax-free lumpsum, minimum 40% must buy an annuity (taxable as income). Most people forget the annuity split and overestimate the usable corpus.'},
+ {k:'nps2',n:'NPS Tier 2',c:'retire',r:9,lock:'No lock-in',play:'Withdraw anytime; gains taxed at slab. Treat it like a mutual fund with NPS costs.'},
+ {k:'eps',n:'EPS Pension',c:'retire',r:0,lock:'Pension from 58',play:'Monthly pension from 58 via Form 10D. Not a corpus \u2014 track expected monthly pension in notes.'},
+ {k:'gratuity',n:'Gratuity',c:'retire',r:0,lock:'5 yrs service',play:'Paid by employer on exit after 5 years: (last salary \u00d7 15/26) \u00d7 years. Tax-free up to \u20b920L.'},
+ {k:'apy',n:'Atal Pension Yojana',c:'retire',r:0,lock:'Pension from 60',play:'Fixed govt-guaranteed pension slab from 60. Track the chosen slab in notes.'},
+ {k:'ssy',n:'Sukanya Samriddhi',c:'small',r:8.2,lock:'Till daughter is 21',play:'Matures when the girl child turns 21; 50% withdrawal allowed at 18 for education. Fully tax-free.'},
+ {k:'nsc',n:'NSC',c:'small',r:7.7,lock:'5 yrs',play:'Auto-matures at 5 years to your PO savings account. Interest is taxable (accrued yearly).'},
+ {k:'kvp',n:'KVP',c:'small',r:7.5,lock:'~115 months (doubles)',play:'Encashable at post office after lock-in; doubles at maturity. Interest taxable.'},
+ {k:'pomis',n:'Post Office MIS',c:'small',r:7.4,lock:'5 yrs',play:'Monthly interest paid out; principal back at 5 years. Interest taxable.'},
+ {k:'pord',n:'Post Office RD',c:'small',r:6.7,lock:'5 yrs',play:'Matures at 5 years; can extend. Interest taxable.'},
+ {k:'potd',n:'Post Office TD',c:'small',r:7.5,lock:'1\u20135 yrs',play:'Like a bank FD at the post office; 5-yr TD gets 80C. Interest taxable.'},
+ {k:'scss',n:'Senior Citizens Savings',c:'small',r:8.2,lock:'5 yrs (60+ only)',play:'Quarterly interest payout; for 60+. Useful post-retirement parking, not now.'},
+ {k:'mahila',n:'Mahila Samman',c:'small',r:7.5,lock:'2 yrs',play:'One-time 2-year deposit for women; partial withdrawal after 1 year.'},
+ {k:'fd',n:'Fixed Deposit',c:'bank',r:7,lock:'Chosen tenure',play:'Premature break costs ~1% penalty on rate. At maturity: renew, or sweep to savings. Interest taxable at slab \u2014 TDS if interest > \u20b940k/yr.'},
+ {k:'rd',n:'Recurring Deposit',c:'bank',r:6.8,lock:'Chosen tenure',play:'Fixed monthly deposit; matures to savings. Interest taxable.'},
+ {k:'sav',n:'Savings Account',c:'bank',r:3,lock:'None',play:'Liquid. Interest up to \u20b910k/yr deductible u/s 80TTA.'},
+ {k:'sweep',n:'Sweep-in FD',c:'bank',r:6.5,lock:'None (auto)',play:'Auto-breaks in units when savings needs money; zero-effort emergency layer.'},
+ {k:'mfidx',n:'Index Fund',c:'market',r:12,lock:'None',mf:1,play:'Redeem anytime in Coin \u2014 T+2/3 to bank. LTCG 12.5% on gains above \u20b91.25L/yr after 1 yr. Never redeem in a crash year if avoidable.'},
+ {k:'mfeq',n:'Equity Fund (active)',c:'market',r:12,lock:'None',mf:1,play:'Same exit and tax as index funds. Review overlap with index holdings yearly.'},
+ {k:'elss',n:'ELSS',c:'market',r:12,lock:'3 yrs per instalment',mf:1,play:'Each SIP instalment locks 3 years separately. 80C benefit (old regime). Same LTCG rules on exit.'},
+ {k:'mfhy',n:'Hybrid Fund',c:'market',r:10,lock:'None',mf:1,play:'Equity taxation if equity allocation \u226565%. Check the fund\u2019s category before assuming.'},
+ {k:'mfdebt',n:'Debt Fund',c:'market',r:7,lock:'None',mf:1,play:'Gains taxed at slab (post-2023 rules). Good for parking, not growth.'},
+ {k:'stocks',n:'Direct Stocks',c:'market',r:12,lock:'None',play:'Sell via Kite; T+1 settlement. LTCG 12.5% above \u20b91.25L/yr after 1 yr, STCG 20% under 1 yr.'},
+ {k:'etf',n:'ETF',c:'market',r:11,lock:'None',play:'Sells like a stock on the exchange; watch liquidity/spread on exit. Equity ETF taxed like stocks.'},
+ {k:'reit',n:'REIT',c:'market',r:8,lock:'None',play:'Exchange-traded; distributions are mixed (dividend/interest/return of capital) with different tax on each.'},
+ {k:'invit',n:'InvIT',c:'market',r:9,lock:'None',play:'Like REITs for infrastructure. Check distribution tax split in the annual statement.'},
+ {k:'sgb',n:'Sovereign Gold Bond',c:'gold',r:8,lock:'8 yrs (exit window yr 5)',play:'2.5%/yr interest + gold price. Capital gains fully tax-free if held to 8-yr maturity via RBI redemption. New issuance paused \u2014 buy on exchange if needed.'},
+ {k:'gldetf',n:'Gold ETF',c:'gold',r:7,lock:'None',play:'Sells on exchange. Gains taxed at slab (<2yr) / 12.5% LTCG (>2yr, post-2024 rules).'},
+ {k:'dgold',n:'Digital Gold',c:'gold',r:7,lock:'None',play:'Sell in-app; 3% GST on buy makes short holds costly. No regulator \u2014 keep small.'},
+ {k:'pgold',n:'Physical Gold',c:'gold',r:6,lock:'None',play:'Making charges lost on resale; jeweller buyback below market. Store value, not growth.'},
+ {k:'rbifrb',n:'RBI Floating Rate Bond',c:'debt',r:8.05,lock:'7 yrs',play:'Rate = NSC + 0.35%, resets half-yearly. Interest paid out, taxable. No premature exit before 60.'},
+ {k:'corpfd',n:'Corporate FD / NCD',c:'debt',r:8,lock:'Chosen tenure',play:'Higher rate = credit risk. Check AAA rating; interest taxable at slab.'},
+ {k:'tbill',n:'T-Bills',c:'debt',r:6.8,lock:'91\u2013364 days',play:'Buy via Kite/RBI Retail Direct; auto-credits at maturity. Gains taxable.'},
+ {k:'gsec',n:'G-Secs',c:'debt',r:7,lock:'Till maturity (tradeable)',play:'Sovereign safety, long tenures. Sell on exchange if needed (liquidity varies).'},
+ {k:'term',n:'Term Insurance',c:'insure',r:0,prot:1,play:'Not an investment \u2014 pure protection. Premium goes out, nothing returns unless death claim. Keep nominee (wife) updated; premiums stop at policy end (60).'},
+ {k:'health',n:'Health Insurance',c:'insure',r:0,prot:1,play:'Cost, not corpus. Port before renewal if claims experience is bad; premiums rise with age bands.'},
+ {k:'ulip',n:'ULIP',c:'insure',r:8,lock:'5 yrs',play:'Exit after 5-yr lock via surrender to fund value. Charges eat early years \u2014 compare with MF before continuing.'},
+ {k:'endow',n:'Endowment / LIC',c:'insure',r:5.5,lock:'Policy term',play:'Surrender value is poor early on. Check paid-up option before surrendering.'},
+ {k:'restate',n:'Real Estate / Rental',c:'other',r:8,lock:'Illiquid',play:'Months to sell; 12.5% LTCG (no indexation) or 20% with indexation for pre-2024 buys. Rental income taxable minus 30% standard deduction.'},
+ {k:'esop',n:'ESOP / RSU',c:'other',r:12,lock:'Vesting schedule',play:'Taxed as salary at vest/exercise, capital gains on sale after. Don\u2019t let it exceed ~10% of net worth in one company.'},
+ {k:'crypto',n:'Crypto',c:'other',r:15,lock:'None',play:'Flat 30% tax + 1% TDS, losses can\u2019t offset anything. Treat as speculation, size accordingly.'},
+ {k:'chit',n:'Chit Fund',c:'other',r:9,lock:'Cycle length',play:'Only registered chits. Returns depend on auction discipline; foreman risk is real.'},
+ {k:'p2p',n:'P2P Lending',c:'other',r:11,lock:'Loan tenure',play:'RBI caps \u20b950L across platforms. Defaults cluster in bad years \u2014 diversify across many borrowers.'},
+ {k:'custom',n:'Custom',c:'other',r:8,lock:'\u2014',play:'You define the rate and the exit \u2014 note it here so future-you remembers.'}
+];
+const BYK = Object.fromEntries(CATALOG.map(i=>[i.k,i]));
+
+/* ================= CRYPTO (PBKDF2 + AES-GCM) ================= */
+const STORE_KEY='retire_blob_v1';
+const enc=new TextEncoder(),dec=new TextDecoder();
+const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function deriveKey(pass,salt){
+  const km=await crypto.subtle.importKey('raw',enc.encode(pass),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:210000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function encryptState(pass,obj){
+  const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+  const key=await deriveKey(pass,salt);
+  const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(JSON.stringify(obj)));
+  return JSON.stringify({v:1,salt:b64(salt),iv:b64(iv),data:b64(ct)});
+}
+async function decryptState(pass,blobStr){
+  const blob=JSON.parse(blobStr);
+  const key=await deriveKey(pass,unb64(blob.salt));
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(blob.iv)},key,unb64(blob.data));
+  return JSON.parse(dec.decode(pt));
+}
+
+/* ================= STATE ================= */
+let S=null, PASS=null, activeProfile='p1', moneyMode='future', tab='dash';
+const uid=()=>Math.random().toString(36).slice(2,9);
+const nowYM=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');};
+
+function seedState(){
+  return {
+    v:1, createdAt:Date.now(), lastExport:null,
+    settings:{inflation:6, postRetireReturn:7, lifeExpectancy:85},
+    profiles:[
+      {id:'p1',name:'Vignesh',age:29,retireAge:60},
+      {id:'p2',name:'Wife',age:28,retireAge:60}
+    ],
+    investments:[
+      {id:uid(),pid:'p1',k:'epf',name:'EPF \u2013 Orion',corpus:690000,asOf:nowYM(),rate:8.25,hist:[{from:'2024-01',amt:12000}],stepUp:0,notes:''},
+      {id:uid(),pid:'p1',k:'ppf',name:'PPF',corpus:54000,asOf:nowYM(),rate:7.1,hist:[{from:'2025-01',amt:5000}],stepUp:0,start:'2025-01',notes:'Extend in 5-yr blocks after year 15'},
+      {id:uid(),pid:'p1',k:'mfidx',name:'UTI Nifty 50 Index (Coin)',corpus:10000,asOf:nowYM(),rate:12,hist:[{from:'2026-08',amt:5000}],stepUp:0,notes:'Manual SIP on the 1st \u2014 phone reminder',mfCode:null},
+      {id:uid(),pid:'p1',k:'fd',name:'FD \u2013 won\u2019t break',corpus:200000,asOf:nowYM(),rate:7,hist:[],stepUp:0,notes:'Untouchable, auto-renew'},
+      {id:uid(),pid:'p1',k:'term',name:'ICICI Term Plan',corpus:0,asOf:nowYM(),rate:0,hist:[{from:'2026-08',amt:308}],stepUp:0,notes:'\u20b93,700/yr \u00b7 cover till 60 \u00b7 nominee: wife'}
+    ]
+  };
+}
+async function save(){ localStorage.setItem(STORE_KEY, await encryptState(PASS,S)); }
+/* ================= MONEY / PROJECTION ENGINE ================= */
+function fmtINR(v){
+  const neg=v<0; v=Math.abs(v);
+  let s;
+  if(v>=1e7) s='\u20b9'+(v/1e7).toFixed(2).replace(/\.00$/,'')+' Cr';
+  else if(v>=1e5) s='\u20b9'+(v/1e5).toFixed(1).replace(/\.0$/,'')+' L';
+  else if(v>=1000) s='\u20b9'+Math.round(v).toLocaleString('en-IN');
+  else s='\u20b9'+Math.round(v);
+  return neg?'-'+s:s;
+}
+function ymAdd(ym,m){let[y,mo]=ym.split('-').map(Number);mo+=m;y+=Math.floor((mo-1)/12);mo=((mo-1)%12)+1;return y+'-'+String(mo).padStart(2,'0');}
+function ymDiff(a,b){const[ay,am]=a.split('-').map(Number),[by,bm]=b.split('-').map(Number);return(by-ay)*12+(bm-am);}
+
+function contribAt(inv,ym){
+  if(!inv.hist||!inv.hist.length)return 0;
+  const sorted=[...inv.hist].sort((a,b)=>a.from<b.from?-1:1);
+  let base=null;
+  for(const h of sorted){ if(h.from<=ym) base=h; }
+  if(!base)return 0;
+  let amt=base.amt;
+  if(inv.stepUp>0){ const yrs=Math.floor(ymDiff(base.from,ym)/12); amt*=Math.pow(1+inv.stepUp/100,yrs); }
+  return amt;
+}
+// monthly series of corpus values from now for `months` months
+function projectSeries(inv,months,rateDelta=0,extraSIP=0,contribMonths=null){
+  const cat=BYK[inv.k]||BYK.custom;
+  if(cat.prot) return new Array(months+1).fill(0);
+  const r=(inv.rate??cat.r)+rateDelta;
+  const mr=Math.pow(1+Math.max(r,0)/100,1/12)-1;
+  let c=inv.corpus||0; const out=[c]; let ym=nowYM();
+  const isMkt=cat.c==='market';
+  const cm=contribMonths??months; // contributions stop at owner's retirement
+  for(let m=1;m<=months;m++){
+    ym=ymAdd(ym,1);
+    c=c*(1+mr)+(m<=cm?contribAt(inv,ym)+(isMkt?extraSIP:0):0);
+    out.push(c);
+  }
+  return out;
+}
+function ownerMonths(inv,whatif={}){
+  const p=S.profiles.find(x=>x.id===inv.pid)||S.profiles[0];
+  return Math.max(((whatif.retireAge??p.retireAge)-p.age)*12,0);
+}
+function activeInvs(pid){
+  return S.investments.filter(i=> pid==='all' ? true : i.pid===pid);
+}
+function currentProfile(){ return activeProfile==='all' ? null : S.profiles.find(p=>p.id===activeProfile); }
+function horizonMonths(whatif){
+  if(activeProfile==='all'){
+    // household: use max years-to-retire across profiles
+    let mx=0; for(const p of S.profiles){ mx=Math.max(mx,((whatif?.retireAge??p.retireAge)-p.age)*12); }
+    return Math.max(mx,12);
+  }
+  const p=currentProfile();
+  return Math.max((((whatif?.retireAge)??p.retireAge)-p.age)*12,12);
+}
+function totalsAt(months,whatif={}){
+  const invs=activeInvs(activeProfile);
+  let total=0; const byCat={};
+  for(const inv of invs){
+    const cat=BYK[inv.k]||BYK.custom; if(cat.prot)continue;
+    const v=projectSeries(inv,months,whatif.rateDelta||0,whatif.extraSIP||0,activeProfile==='all'?ownerMonths(inv,whatif):null)[months];
+    total+=v; byCat[cat.c]=(byCat[cat.c]||0)+v;
+  }
+  return {total,byCat};
+}
+function todayMoney(v,years,inflOverride){
+  const infl=(inflOverride??S.settings.inflation)/100;
+  return v/Math.pow(1+infl,years);
+}
+// sustainable monthly withdrawal (in retirement-day rupees) lasting till life expectancy
+function sustainableMonthly(corpus,yearsRetired,postR,infl){
+  if(corpus<=0)return 0;
+  const mr=Math.pow(1+postR/100,1/12)-1, mi=Math.pow(1+infl/100,1/12)-1, n=yearsRetired*12;
+  let lo=0,hi=corpus; // monthly withdrawal upper bound
+  const lasts=w=>{let c=corpus,wd=w;for(let m=0;m<n;m++){c=c*(1+mr)-wd;wd*=(1+mi);if(c<=0)return false;}return true;};
+  for(let i=0;i<40;i++){const mid=(lo+hi)/2; lasts(mid)?lo=mid:hi=mid;}
+  return lo;
+}
+function corpusLastsTill(corpus,monthlyTodayMoney,retireAge,yearsToRetire,postR,infl){
+  // monthly in today's money -> inflate to retirement day
+  let wd=monthlyTodayMoney*Math.pow(1+infl/100,yearsToRetire);
+  const mr=Math.pow(1+postR/100,1/12)-1, mi=Math.pow(1+infl/100,1/12)-1;
+  let c=corpus,age=retireAge,m=0;
+  while(c>0&&age<110){ c=c*(1+mr)-wd; wd*=(1+mi); m++; age=retireAge+m/12; }
+  return Math.floor(age);
+}
+
+/* ================= MF LIVE DATA (mfapi.in) ================= */
+let mfStatus={when:null,ok:null};
+async function mfSearch(q){
+  const r=await fetch('https://api.mfapi.in/mf/search?q='+encodeURIComponent(q));
+  return r.json();
+}
+async function mfLatest(code){
+  const r=await fetch('https://api.mfapi.in/mf/'+code);
+  const j=await r.json(); return j.data||[];
+}
+function navCAGR(data,years){
+  if(!data||data.length<2)return null;
+  const latest=data[0]; const target=new Date(); target.setFullYear(target.getFullYear()-years);
+  let past=null;
+  for(const d of data){ const[dd,mm,yy]=d.date.split('-'); if(new Date(yy,mm-1,dd)<=target){past=d;break;} }
+  if(!past)return null;
+  const n=+latest.nav/+past.nav;
+  return (Math.pow(n,1/years)-1)*100;
+}
+async function refreshNAVs(){
+  const mfs=S.investments.filter(i=>i.mfCode);
+  if(!mfs.length)return;
+  let changed=false;
+  for(const inv of mfs){
+    try{
+      const data=await mfLatest(inv.mfCode);
+      if(!data.length)continue;
+      const nav=+data[0].nav;
+      if(inv.units) { inv.corpus=Math.round(inv.units*nav); }
+      inv.nav=nav; inv.navDate=data[0].date;
+      const c3=navCAGR(data,3),c5=navCAGR(data,5),c1=navCAGR(data,1);
+      inv.cagr={y1:c1,y3:c3,y5:c5};
+      changed=true;
+    }catch(e){}
+  }
+  mfStatus={when:new Date(),ok:changed};
+  if(changed){await save(); if(tab==='dash'||tab==='invest')render();}
+}
+
+/* ================= INSIGHTS (rule-based, no AI key) ================= */
+function insights(){
+  const out=[]; const p=currentProfile(); if(!p)return out;
+  const yrs=p.retireAge-p.age, months=yrs*12;
+  const invs=activeInvs(activeProfile).filter(i=>!(BYK[i.k]||{}).prot);
+  let eq=0,debt=0;
+  for(const inv of invs){
+    const v=projectSeries(inv,0)[0];
+    const c=(BYK[inv.k]||BYK.custom).c;
+    if(c==='market'||inv.k==='esop'||inv.k==='crypto')eq+=v; else debt+=v;
+  }
+  const tot=eq+debt;
+  if(tot>0){
+    const dp=Math.round(debt/tot*100);
+    if(dp>70&&yrs>15) out.push({c:'var(--amber)',t:`Your corpus is <b>${dp}% debt-heavy</b> for a ${yrs}-year horizon \u2014 equity SIP step-ups are where the growth will come from.`});
+    else out.push({c:'var(--green)',t:`Current split: <b>${100-dp}% growth / ${dp}% safe</b> across ${invs.length} sources.`});
+  }
+  const ppf=invs.find(i=>i.k==='ppf');
+  if(ppf&&ppf.start){
+    const mat=ymAdd(ppf.start,180);
+    out.push({c:'var(--cyan)',t:`PPF matures <b>${mat}</b> \u2014 extend in 5-yr blocks (with contribution) to keep it compounding till ${p.retireAge}.`});
+  }
+  const mf=invs.filter(i=>(BYK[i.k]||{}).mf);
+  for(const m of mf){ if(!m.stepUp) { out.push({c:'var(--pink)',t:`<b>${m.name}</b> has no step-up \u2014 bumping the SIP with every hike is the single biggest lever you have.`}); break; } }
+  const term=S.investments.find(i=>i.k==='term'&&(activeProfile==='all'||i.pid===activeProfile));
+  if(term) out.push({c:'var(--red)',t:`<b>${term.name}</b> is protection, not corpus \u2014 shown as cost only. ${term.notes||''}`});
+  return out;
+}
+/* ================= CHARTS (hand-rolled SVG) ================= */
+function stackedChart(seriesByCat,yearsLabels,W=520,H=200){
+  const cats=Object.keys(seriesByCat); if(!cats.length)return '<p class="sub">Add investments to see the projection.</p>';
+  const n=seriesByCat[cats[0]].length;
+  const totals=Array.from({length:n},(_,i)=>cats.reduce((s,c)=>s+seriesByCat[c][i],0));
+  const max=Math.max(...totals,1);
+  const px=i=>i/(n-1)*(W-8)+4, py=v=>H-14-(v/max)*(H-30);
+  let acc=new Array(n).fill(0), paths='';
+  for(const c of cats){
+    let top=acc.map((a,i)=>a+seriesByCat[c][i]);
+    let d='M'+px(0)+','+py(top[0]);
+    for(let i=1;i<n;i++)d+=' L'+px(i)+','+py(top[i]);
+    for(let i=n-1;i>=0;i--)d+=' L'+px(i)+','+py(acc[i]);
+    paths+=`<path d="${d}Z" fill="${CATS[c].color}" opacity="0.75"/>`;
+    acc=top;
+  }
+  const gy=[0.33,0.66,1].map(f=>`<line x1="4" x2="${W-4}" y1="${py(max*f)}" y2="${py(max*f)}" stroke="var(--line)" stroke-dasharray="3 4" stroke-width="1"/><text x="${W-4}" y="${py(max*f)-4}" text-anchor="end" font-size="9.5" fill="var(--faint)">${fmtINR(max*f)}</text>`).join('');
+  const xl=yearsLabels.map((l,i)=>i%Math.ceil(yearsLabels.length/5)===0?`<text x="${px(Math.min(i,n-1))}" y="${H-2}" font-size="9.5" fill="var(--faint)">${l}</text>`:'').join('');
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">${gy}${paths}${xl}</svg>`;
+}
+function drawdownChart(corpus,retireAge,lastAge,postR,infl,monthly,W=520,H=150){
+  const mr=Math.pow(1+postR/100,1/12)-1, mi=Math.pow(1+infl/100,1/12)-1;
+  let c=corpus,wd=monthly,pts=[c];
+  const months=Math.min((lastAge-retireAge)*12+24,50*12);
+  for(let m=0;m<months&&c>0;m++){c=c*(1+mr)-wd;wd*=(1+mi);pts.push(Math.max(c,0));}
+  const max=Math.max(...pts,1),n=pts.length;
+  const px=i=>i/(n-1)*(W-8)+4, py=v=>H-14-(v/max)*(H-26);
+  let d='M'+px(0)+','+py(pts[0]);
+  for(let i=1;i<n;i++)d+=' L'+px(i)+','+py(pts[i]);
+  const zeroX=pts[n-1]<=0?px(n-1):null;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">
+    <path d="${d} L${px(n-1)},${H-14} L4,${H-14}Z" fill="url(#ddg)" opacity="0.35"/>
+    <path d="${d}" fill="none" stroke="#38E5FF" stroke-width="2"/>
+    <defs><linearGradient id="ddg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38E5FF"/><stop offset="1" stop-color="#38E5FF" stop-opacity="0"/></linearGradient></defs>
+    <text x="4" y="10" font-size="10" fill="var(--faint)">age ${retireAge}</text>
+    <text x="${W-4}" y="10" text-anchor="end" font-size="10" fill="var(--faint)">age ${retireAge+Math.round(n/12)}</text>
+    ${zeroX?`<circle cx="${zeroX}" cy="${H-14}" r="3.5" fill="var(--red)"/>`:''}
+  </svg>`;
+}
+
+/* ================= VIEWS ================= */
+const view=document.getElementById('view');
+let whatif={retireAge:null,rateDelta:0,extraSIP:0,infl:null};
+
+function render(){
+  renderProfiles(); renderNudge();
+  document.getElementById('fab').classList.toggle('hidden',tab!=='invest');
+  if(tab==='dash')renderDash();
+  else if(tab==='invest')renderInvest();
+  else if(tab==='play')renderPlay();
+  else renderSettings();
+}
+function renderProfiles(){
+  const el=document.getElementById('profileChips');
+  el.innerHTML=S.profiles.map(p=>`<button class="pchip ${activeProfile===p.id?'active':''}" data-p="${p.id}"><span class="pavatar">${p.name[0]}</span>${p.name} \u00b7 ${p.age}\u2192${p.retireAge}</button>`).join('')
+   +`<button class="pchip ${activeProfile==='all'?'active':''}" data-p="all"><span class="pavatar" style="background:var(--card2);color:var(--dim)">\u2211</span>Household</button>`;
+  el.querySelectorAll('.pchip').forEach(b=>b.onclick=()=>{activeProfile=b.dataset.p;whatif={retireAge:null,rateDelta:0,extraSIP:0,infl:null};render();});
+}
+function renderNudge(){
+  const el=document.getElementById('backupNudge');
+  const days=S.lastExport?Math.floor((Date.now()-S.lastExport)/864e5):Math.floor((Date.now()-S.createdAt)/864e5);
+  el.innerHTML = days>=30 ? `<div class="notice">\u26a0\ufe0f No backup exported in ${days} days. localStorage dies silently if browser data clears \u2014 your last export is the safety net.<button id="nudgeExport">Export now</button></div>`:'';
+  const b=document.getElementById('nudgeExport'); if(b)b.onclick=exportBackup;
+}
+
+function renderDash(){
+  const p=currentProfile();
+  const retireAge = whatif.retireAge ?? (p?p.retireAge:60);
+  const yrs = p ? retireAge-p.age : Math.max(...S.profiles.map(x=>retireAge-x.age));
+  const months=Math.max(yrs*12,12);
+  const infl=whatif.infl??S.settings.inflation;
+  const {total,byCat}=totalsAt(months,{...whatif,retireAge});
+  const tdy=todayMoney(total,yrs,infl);
+  const shown=moneyMode==='today'?tdy:total;
+  // monthly out & protection
+  const invs=activeInvs(activeProfile);
+  let monthlyOut=0,protCost=0;
+  for(const inv of invs){ const c=BYK[inv.k]||BYK.custom; const amt=contribAt(inv,nowYM()); if(c.prot)protCost+=amt; else monthlyOut+=amt; }
+  // drawdown
+  const postR=S.settings.postRetireReturn, le=S.settings.lifeExpectancy;
+  const sm=sustainableMonthly(total,le-retireAge,postR,infl);
+  const smToday=todayMoney(sm,yrs,infl);
+  // stacked series yearly
+  const seriesByCat={};
+  for(const inv of invs){ const c=BYK[inv.k]||BYK.custom; if(c.prot)continue;
+    const s=projectSeries(inv,months,whatif.rateDelta,whatif.extraSIP,activeProfile==='all'?ownerMonths(inv,whatif):null);
+    const yearly=[]; for(let m=0;m<=months;m+=12)yearly.push(s[m]);
+    if(!seriesByCat[c.c])seriesByCat[c.c]=new Array(yearly.length).fill(0);
+    yearly.forEach((v,i)=>seriesByCat[c.c][i]+=v);
+  }
+  const startYr=new Date().getFullYear();
+  const labels=Array.from({length:Math.floor(months/12)+1},(_,i)=>String(startYr+i));
+  const ins=insights();
+  view.innerHTML=`
+  <div class="hero fade">
+    <div class="hero-label">${activeProfile==='all'?'Household corpus':'Corpus'} at ${retireAge}</div>
+    <div class="hero-num" id="heroNum">${fmtINR(shown)}</div>
+    <div class="hero-sub">${moneyMode==='today'?`worth in <b>today\u2019s money</b> \u00b7 nominal ${fmtINR(total)}`:`in ${startYr+yrs} rupees \u00b7 <b>${fmtINR(tdy)}</b> in today\u2019s money`}</div>
+    <div class="money-toggle">
+      <button class="${moneyMode==='future'?'on':''}" data-m="future">At ${retireAge}</button>
+      <button class="${moneyMode==='today'?'on':''}" data-m="today">Today\u2019s money</button>
+    </div>
+  </div>
+  <div class="section"><div class="stat-row">
+    <div class="stat"><div class="k">Going out monthly</div><div class="v">${fmtINR(monthlyOut)}</div></div>
+    <div class="stat"><div class="k">Drawdown possible</div><div class="v">${fmtINR(smToday)}<span style="font-size:11px;color:var(--dim)">/mo</span></div></div>
+    <div class="stat"><div class="k">Lasts till</div><div class="v">age ${le}</div></div>
+  </div></div>
+  <div class="section">
+    <div class="chart-wrap fade"><h3>How each source builds it</h3><div class="sub">Stacked by category, ${startYr} \u2192 ${startYr+yrs}</div>
+      ${stackedChart(seriesByCat,labels)}
+      <div class="legend">${Object.keys(seriesByCat).map(c=>`<span><i style="background:${CATS[c].color}"></i>${CATS[c].name} \u00b7 ${fmtINR(byCat[c]||0)}</span>`).join('')}</div>
+    </div>
+    <div class="chart-wrap fade"><h3>After ${retireAge}: the drawdown</h3><div class="sub">${fmtINR(smToday)}/month in today\u2019s money (${fmtINR(sm)} then), growing with inflation, lasts till ~${le}</div>
+      ${drawdownChart(total,retireAge,le,postR,infl,sm)}
+    </div>
+    <div class="card whatif fade"><h3 style="font-size:14px;font-weight:600">What if\u2026</h3>
+      <label>Retire at <b>${retireAge}</b></label><input type="range" id="wRetire" min="45" max="65" value="${retireAge}">
+      <label>Extra monthly SIP <b>+${fmtINR(whatif.extraSIP)}</b></label><input type="range" id="wSip" min="0" max="50000" step="1000" value="${whatif.extraSIP}">
+      <label>Return assumption <b>${whatif.rateDelta>=0?'+':''}${whatif.rateDelta}%</b></label><input type="range" id="wRate" min="-3" max="3" step="0.5" value="${whatif.rateDelta}">
+      <label>Inflation <b>${infl}%</b></label><input type="range" id="wInfl" min="4" max="9" step="0.5" value="${infl}">
+    </div>
+    <div class="card fade"><h3 style="font-size:14px;font-weight:600;margin-bottom:4px">Insights</h3>
+      ${ins.map(i=>`<div class="insight"><span class="dot" style="background:${i.c}"></span><span>${i.t}</span></div>`).join('')||'<p class="sub">Add investments to see insights.</p>'}
+      ${protCost?`<div class="insight"><span class="dot" style="background:var(--red)"></span><span>Protection cost: <b>${fmtINR(protCost*12)}/yr</b> \u2014 kept out of the corpus, honestly.</span></div>`:''}
+    </div>
+    ${mfStatus.when?`<div class="updated">NAVs ${mfStatus.ok?'refreshed':'unchanged (offline \u2014 using cached)'} \u00b7 ${mfStatus.when.toLocaleTimeString()}</div>`:''}
+  </div>`;
+  view.querySelectorAll('.money-toggle button').forEach(b=>b.onclick=()=>{moneyMode=b.dataset.m;render();});
+  const bind=(id,fn)=>{const e=document.getElementById(id); e.oninput=()=>{fn(+e.value);render();};};
+  bind('wRetire',v=>whatif.retireAge=v); bind('wSip',v=>whatif.extraSIP=v);
+  bind('wRate',v=>whatif.rateDelta=v); bind('wInfl',v=>whatif.infl=v);
+}
+
+function renderInvest(){
+  const invs=activeInvs(activeProfile);
+  const groups={};
+  for(const inv of invs){const c=(BYK[inv.k]||BYK.custom).c;(groups[c]=groups[c]||[]).push(inv);}
+  view.innerHTML=`<div class="section fade"><h2>Investments <small>${invs.length} sources</small></h2>
+  ${Object.keys(CATS).filter(c=>groups[c]).map(c=>`
+    <h2 style="font-size:13px;color:var(--dim);margin:16px 0 8px">${CATS[c].name}</h2>
+    ${groups[c].map(inv=>{
+      const cat=BYK[inv.k]||BYK.custom;
+      const amt=contribAt(inv,nowYM());
+      return `<div class="inv" style="--cat:${CATS[c].color}" data-id="${inv.id}">
+        <div class="inv-body"><div class="inv-name">${inv.name}</div>
+        <div class="inv-meta">${cat.n} \u00b7 ${cat.prot?'protection':((inv.rate??cat.r)+'%')}${inv.nav?` \u00b7 NAV ${inv.nav} (${inv.navDate})`:''}</div>
+        ${inv.stepUp?`<span class="tag">step-up ${inv.stepUp}%/yr</span>`:''}${inv.hist&&inv.hist.length>1?`<span class="tag">${inv.hist.length} contribution changes</span>`:''}</div>
+        <div class="inv-nums"><div class="inv-corpus">${cat.prot?fmtINR(amt*12)+'/yr':fmtINR(inv.corpus||0)}</div>
+        <div class="inv-mo">${cat.prot?'premium':(amt?fmtINR(amt)+'/mo':'no monthly')}</div></div>
+      </div>`;}).join('')}`).join('')||'<p class="sub" style="color:var(--dim)">Nothing yet \u2014 tap + to add your first source.</p>'}
+  </div>`;
+  view.querySelectorAll('.inv').forEach(el=>el.onclick=()=>openInvSheet(el.dataset.id));
+}
+
+function renderPlay(){
+  const invs=activeInvs(activeProfile);
+  const p=currentProfile();
+  view.innerHTML=`<div class="section fade"><h2>Withdrawal playbook <small>how each rupee comes out</small></h2>
+  ${invs.map(inv=>{
+    const cat=BYK[inv.k]||BYK.custom;
+    let when='';
+    if(inv.k==='ppf'&&inv.start){when='matures '+ymAdd(inv.start,180);}
+    else if(inv.maturity){when='matures '+inv.maturity;}
+    else if(cat.lock&&cat.lock!=='None'&&cat.lock!=='\u2014'){when=cat.lock;}
+    return `<div class="play"><h3>${inv.name}<span class="when">${when}</span></h3><p>${cat.play}</p></div>`;
+  }).join('')||'<p style="color:var(--dim)">Add investments to build your playbook.</p>'}
+  </div>`;
+}
+function renderSettings(){
+  view.innerHTML=`<div class="section fade"><h2>Settings</h2>
+  <div class="card"><h3 style="font-size:14px;font-weight:600">Assumptions</h3>
+    <div class="row2"><div><label>Inflation %</label><input type="number" id="sInfl" step="0.5" value="${S.settings.inflation}"></div>
+    <div><label>Post-retirement return %</label><input type="number" id="sPost" step="0.5" value="${S.settings.postRetireReturn}"></div></div>
+    <label>Plan till age (life expectancy)</label><input type="number" id="sLife" value="${S.settings.lifeExpectancy}">
+  </div>
+  <div class="card"><h3 style="font-size:14px;font-weight:600">Profiles</h3>
+    ${S.profiles.map(p=>`<div class="row2" style="margin-top:10px" data-pid="${p.id}">
+      <div><label>Name</label><input class="pName" value="${p.name}"></div>
+      <div style="flex:0 0 80px"><label>Age</label><input class="pAge" type="number" value="${p.age}"></div>
+      <div style="flex:0 0 90px"><label>Retire at</label><input class="pRet" type="number" value="${p.retireAge}"></div>
+    </div>`).join('')}
+    <button class="addline" id="addProfile">+ Add family member</button>
+  </div>
+  <div class="card"><h3 style="font-size:14px;font-weight:600">Backup</h3>
+    <p style="font-size:13px;color:var(--dim);margin:8px 0 14px">One encrypted file restores everything on any phone or laptop \u2014 WhatsApp it to yourself, park it in Drive, doesn\u2019t matter. Useless without your passphrase.</p>
+    <div class="row2"><button class="btn ghost" id="btnExport">Export backup</button><button class="btn ghost" id="btnImport">Import backup</button></div>
+    <p style="font-size:12px;color:var(--faint);margin-top:10px">Last export: ${S.lastExport?new Date(S.lastExport).toLocaleDateString():'never'}</p>
+  </div>
+  <div class="card"><h3 style="font-size:14px;font-weight:600">Danger</h3>
+    <p style="font-size:13px;color:var(--dim);margin:8px 0 14px">The passphrase is the only key \u2014 there is no reset. To change it, export a backup, wipe, set a new one, import.</p>
+    <button class="btn danger" id="btnWipe">Wipe everything on this device</button>
+  </div>
+  <button class="btn ghost" id="saveSettings" style="margin-bottom:20px">Save settings</button>
+  </div>`;
+  document.getElementById('saveSettings').onclick=async()=>{
+    S.settings.inflation=+document.getElementById('sInfl').value||6;
+    S.settings.postRetireReturn=+document.getElementById('sPost').value||7;
+    S.settings.lifeExpectancy=+document.getElementById('sLife').value||85;
+    view.querySelectorAll('[data-pid]').forEach(row=>{
+      const p=S.profiles.find(x=>x.id===row.dataset.pid);
+      p.name=row.querySelector('.pName').value||p.name;
+      p.age=+row.querySelector('.pAge').value||p.age;
+      p.retireAge=+row.querySelector('.pRet').value||p.retireAge;
+    });
+    await save(); render();
+  };
+  document.getElementById('addProfile').onclick=async()=>{
+    S.profiles.push({id:uid(),name:'New member',age:30,retireAge:60}); await save(); render();
+  };
+  document.getElementById('btnExport').onclick=exportBackup;
+  document.getElementById('btnImport').onclick=()=>importBackup(false);
+  document.getElementById('btnWipe').onclick=async()=>{
+    if(confirm('Wipe all data on this device? Make sure you have an export first.')){localStorage.removeItem(STORE_KEY);location.reload();}
+  };
+}
+
+/* ================= ADD / EDIT SHEET ================= */
+const sheet=document.getElementById('sheet'),veil=document.getElementById('veil');
+function openSheet(html){sheet.innerHTML='<div class="sheet-grip"></div>'+html;sheet.classList.add('open');veil.classList.add('open');}
+function closeSheet(){sheet.classList.remove('open');veil.classList.remove('open');}
+veil.onclick=closeSheet;
+
+function openInvSheet(id){
+  const inv=id?S.investments.find(i=>i.id===id):{id:null,pid:activeProfile==='all'?'p1':activeProfile,k:'mfidx',name:'',corpus:0,rate:null,hist:[],stepUp:0,notes:''};
+  const cat=BYK[inv.k]||BYK.custom;
+  openSheet(`
+  <h2>${id?'Edit':'Add'} investment</h2><p class="sub">${id?'':'Pick from the catalog \u2014 rates, lock-ins and exit rules are pre-known. You only enter your numbers.'}</p>
+  <label>Instrument</label>
+  <select id="fKind">${Object.keys(CATS).map(c=>`<optgroup label="${CATS[c].name}">${CATALOG.filter(i=>i.c===c).map(i=>`<option value="${i.k}" ${i.k===inv.k?'selected':''}>${i.n}${i.r?` \u00b7 ${i.r}%`:''}</option>`).join('')}</optgroup>`).join('')}</select>
+  <label>Whose</label>
+  <select id="fPid">${S.profiles.map(p=>`<option value="${p.id}" ${p.id===inv.pid?'selected':''}>${p.name}</option>`).join('')}</select>
+  <label>Name it</label><input id="fName" value="${inv.name||''}" placeholder="e.g. UTI Nifty 50 (Coin)">
+  <div id="mfBlock" class="${cat.mf?'':'hidden'}">
+    <label>Link live fund (mfapi.in \u2014 optional)</label>
+    <input id="mfQuery" placeholder="Search e.g. UTI Nifty 50" value="${inv.mfName||''}">
+    <div id="mfResults"></div>
+    ${inv.mfCode?`<p class="sub" style="margin-top:6px">Linked: ${inv.mfName||inv.mfCode} \u00b7 NAV ${inv.nav||'?'} ${inv.cagr&&inv.cagr.y5?`\u00b7 5y CAGR ${inv.cagr.y5.toFixed(1)}%`:''}</p>`:''}
+  </div>
+  <div class="row2">
+    <div><label>Current value \u20b9</label><input id="fCorpus" type="number" value="${inv.corpus||0}"></div>
+    <div><label>Expected return %/yr</label><input id="fRate" type="number" step="0.1" value="${inv.rate??cat.r}"></div>
+  </div>
+  <label>Contribution history <span style="color:var(--faint)">(\u20b95k from Jan 2024 \u2192 \u20b910k from Aug 2026\u2026)</span></label>
+  <div id="histRows">${(inv.hist||[]).map(h=>histRow(h)).join('')}</div>
+  <button class="addline" id="addHist">+ Add a change</button>
+  <div class="row2">
+    <div><label>Step-up %/yr</label><input id="fStep" type="number" step="1" value="${inv.stepUp||0}"></div>
+    <div><label>Start / open date</label><input id="fStart" type="month" value="${inv.start||''}"></div>
+  </div>
+  <label>Maturity date <span style="color:var(--faint)">(FD/bonds \u2014 optional)</span></label><input id="fMat" type="month" value="${inv.maturity||''}">
+  <label>Notes</label><textarea id="fNotes" rows="2">${inv.notes||''}</textarea>
+  <div style="height:16px"></div>
+  <button class="btn" id="fSave">${id?'Save changes':'Add investment'}</button>
+  ${id?'<div style="height:10px"></div><button class="btn danger" id="fDel">Delete</button>':''}
+  <div style="height:6px"></div>`);
+  let mfPick=inv.mfCode?{code:inv.mfCode,name:inv.mfName}:null;
+  document.getElementById('fKind').onchange=e=>{
+    const c=BYK[e.target.value];
+    document.getElementById('mfBlock').classList.toggle('hidden',!c.mf);
+    document.getElementById('fRate').value=c.r;
+  };
+  document.getElementById('addHist').onclick=()=>{
+    document.getElementById('histRows').insertAdjacentHTML('beforeend',histRow({from:nowYM(),amt:5000}));
+    bindHistX();
+  };
+  bindHistX();
+  let mfTimer;
+  document.getElementById('mfQuery').oninput=e=>{
+    clearTimeout(mfTimer);
+    const q=e.target.value.trim(); if(q.length<3)return;
+    mfTimer=setTimeout(async()=>{
+      const box=document.getElementById('mfResults');
+      box.innerHTML='<p class="sub">Searching\u2026</p>';
+      try{
+        const res=await mfSearch(q);
+        box.innerHTML=res.slice(0,6).map(r=>`<div class="mf-result" data-code="${r.schemeCode}" data-name="${r.schemeName.replace(/"/g,'')}">${r.schemeName}</div>`).join('')||'<p class="sub">No match.</p>';
+        box.querySelectorAll('.mf-result').forEach(el=>el.onclick=async()=>{
+          mfPick={code:el.dataset.code,name:el.dataset.name};
+          box.innerHTML='<p class="sub">Linked: '+el.dataset.name+' \u2014 pulling NAV & CAGR\u2026</p>';
+          try{
+            const data=await mfLatest(mfPick.code);
+            mfPick.nav=+data[0].nav; mfPick.navDate=data[0].date;
+            mfPick.cagr={y1:navCAGR(data,1),y3:navCAGR(data,3),y5:navCAGR(data,5)};
+            if(mfPick.cagr.y5)document.getElementById('fRate').value=mfPick.cagr.y5.toFixed(1);
+            box.innerHTML=`<p class="sub">Linked \u00b7 NAV ${mfPick.nav} (${mfPick.navDate}) \u00b7 5y CAGR ${mfPick.cagr.y5?mfPick.cagr.y5.toFixed(1)+'% \u2014 set as projection rate (edit if you like)':'n/a'}</p>`;
+          }catch(err){box.innerHTML='<p class="sub">Linked \u00b7 NAV fetch failed (offline?) \u2014 will retry on next open.</p>';}
+        });
+      }catch(err){box.innerHTML='<p class="sub">Search failed \u2014 check network. You can still add with a manual rate.</p>';}
+    },450);
+  };
+  document.getElementById('fSave').onclick=async()=>{
+    const hist=[...document.querySelectorAll('#histRows .hist-row')].map(r=>({from:r.querySelector('.hFrom').value,amt:+r.querySelector('.hAmt').value||0})).filter(h=>h.from&&h.amt>0);
+    const obj={
+      id:inv.id||uid(), pid:document.getElementById('fPid').value, k:document.getElementById('fKind').value,
+      name:document.getElementById('fName').value||BYK[document.getElementById('fKind').value].n,
+      corpus:+document.getElementById('fCorpus').value||0, asOf:nowYM(),
+      rate:+document.getElementById('fRate').value, hist, stepUp:+document.getElementById('fStep').value||0,
+      start:document.getElementById('fStart').value||null, maturity:document.getElementById('fMat').value||null,
+      notes:document.getElementById('fNotes').value||''
+    };
+    if(mfPick){obj.mfCode=mfPick.code;obj.mfName=mfPick.name;obj.nav=mfPick.nav||inv.nav;obj.navDate=mfPick.navDate||inv.navDate;obj.cagr=mfPick.cagr||inv.cagr;
+      if(obj.nav&&obj.corpus)obj.units=obj.corpus/obj.nav;}
+    if(inv.id){const i=S.investments.findIndex(x=>x.id===inv.id);S.investments[i]=obj;}
+    else S.investments.push(obj);
+    await save(); closeSheet(); render();
+  };
+  const del=document.getElementById('fDel');
+  if(del)del.onclick=async()=>{if(confirm('Delete '+inv.name+'?')){S.investments=S.investments.filter(x=>x.id!==inv.id);await save();closeSheet();render();}};
+}
+function histRow(h){return `<div class="hist-row"><input type="month" class="hFrom" value="${h.from}"><input type="number" class="hAmt" value="${h.amt}" placeholder="\u20b9/month"><button class="x">\u00d7</button></div>`;}
+function bindHistX(){document.querySelectorAll('#histRows .x').forEach(b=>b.onclick=()=>b.parentElement.remove());}
+
+/* ================= BACKUP ================= */
+async function exportBackup(){
+  S.lastExport=Date.now(); await save();
+  const blob=localStorage.getItem(STORE_KEY);
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([blob],{type:'application/json'}));
+  a.download='retire-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click(); render();
+}
+function importBackup(atLock){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='.json,application/json';
+  inp.onchange=async()=>{
+    const txt=await inp.files[0].text();
+    try{ JSON.parse(txt); }catch(e){ alert('Not a valid backup file.'); return; }
+    if(atLock){
+      localStorage.setItem(STORE_KEY,txt);
+      alert('Backup restored. Unlock with the passphrase it was exported with.');
+      location.reload(); return;
+    }
+    const pass=prompt('Passphrase of THAT backup file:'); if(!pass)return;
+    let incoming;
+    try{ incoming=await decryptState(pass,txt); }catch(e){ alert('Wrong passphrase for that file.'); return; }
+    const mode=confirm('OK = REPLACE everything with the file.\nCancel = MERGE (keeps newer local entries).')?'replace':'merge';
+    if(mode==='replace'){ S=incoming; }
+    else{
+      const have=new Set(S.investments.map(i=>i.id));
+      for(const inv of incoming.investments)if(!have.has(inv.id))S.investments.push(inv);
+      const pf=new Set(S.profiles.map(p=>p.id));
+      for(const p of incoming.profiles)if(!pf.has(p.id))S.profiles.push(p);
+    }
+    await save(); render(); alert('Imported ('+mode+').');
+  };
+  inp.click();
+}
+
+/* ================= BOOT / LOCK FLOW ================= */
+const lockEl=document.getElementById('lock'),passIn=document.getElementById('passInput'),passIn2=document.getElementById('passInput2');
+const isFirst=!localStorage.getItem(STORE_KEY);
+if(isFirst){
+  document.getElementById('lockTitle').innerHTML='Set your <em>passphrase</em>';
+  document.getElementById('lockSub').textContent='This encrypts everything on this device. There is no reset \u2014 pick one you\u2019ll never forget.';
+  passIn2.classList.remove('hidden');
+  document.getElementById('unlockBtn').textContent='Create & start';
+}
+document.getElementById('unlockBtn').onclick=doUnlock;
+passIn.onkeydown=e=>{if(e.key==='Enter')doUnlock();};
+passIn2.onkeydown=e=>{if(e.key==='Enter')doUnlock();};
+document.getElementById('importAtLock').onclick=()=>importBackup(true);
+async function doUnlock(){
+  const err=document.getElementById('lockErr'); err.textContent='';
+  const p=passIn.value;
+  if(!p){err.textContent='Enter a passphrase.';return;}
+  if(isFirst){
+    if(p.length<6){err.textContent='At least 6 characters, yaar.';return;}
+    if(p!==passIn2.value){err.textContent='Passphrases don\u2019t match.';return;}
+    PASS=p; S=seedState(); await save();
+  }else{
+    try{ S=await decryptState(p,localStorage.getItem(STORE_KEY)); PASS=p; }
+    catch(e){ err.textContent='Wrong passphrase \u2014 nothing renders without it.'; return; }
+  }
+  lockEl.classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('tabbar').classList.remove('hidden');
+  render();
+  refreshNAVs(); // silent, cached fallback
+}
+document.getElementById('lockNow').onclick=()=>location.reload();
+document.getElementById('fab').onclick=()=>openInvSheet(null);
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  b.classList.add('active'); tab=b.dataset.tab; render();
+  window.scrollTo({top:0});
+});
+</script>
+</body>
+</html>
