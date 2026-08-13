@@ -208,7 +208,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
     <input type="password" id="passInput2" class="hidden" placeholder="Repeat passphrase" autocomplete="new-password">
     <div class="lock-err" id="lockErr"></div>
     <button class="btn" id="unlockBtn">Unlock</button>
-    <p class="lock-foot" style="margin-top:18px;font-size:12px;color:var(--dim)">Forgot it? There is no reset — restore from an exported backup file instead.<br><button id="importAtLock" style="color:var(--cyan);font-weight:600;margin-top:6px">Import backup file</button></p>
+    <p class="lock-foot" style="margin-top:18px;font-size:12px;color:var(--dim)">Forgot it? There is no reset — restore from an exported backup file instead.<br><button id="importAtLock" style="color:var(--cyan);font-weight:600;margin-top:6px">Import backup file</button><br><button id="wipeAtLock" style="color:var(--red);font-weight:600;margin-top:10px">Wipe this device & start fresh</button></p>
   </div>
 </div>
 
@@ -1110,6 +1110,11 @@ document.getElementById('unlockBtn').onclick=doUnlock;
 passIn.onkeydown=e=>{if(e.key==='Enter')doUnlock();};
 passIn2.onkeydown=e=>{if(e.key==='Enter')doUnlock();};
 document.getElementById('importAtLock').onclick=()=>importBackup(true);
+document.getElementById('wipeAtLock').onclick=()=>{
+  if(confirm('Delete ALL data stored on this device and start from zero? This cannot be undone (export a backup first if you need it).')){
+    localStorage.removeItem(STORE_KEY); location.reload();
+  }
+};
 async function doUnlock(){
   const err=document.getElementById('lockErr'); err.textContent='';
   const p=passIn.value;
